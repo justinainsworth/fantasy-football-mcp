@@ -44,6 +44,9 @@ yahoo_token.json
 *_token.json
 refresh_token.txt
 access_token.txt
+.yahoo_oauth.json
+.yahoo_token_complete.json
+.yahoo_token.json
 
 # Test files and debug output
 test_*.py
