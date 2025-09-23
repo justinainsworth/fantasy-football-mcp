@@ -844,6 +844,224 @@ async def list_tools() -> list[Tool]:
                 },
                 "required": ["league_key"]
             }
+        ),
+        # === ROSTER MANAGEMENT FUNCTIONS ===
+        Tool(
+            name="ff_set_lineup",
+            description="Change player positions for specific players (not full lineup replacement)",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "league_key": {
+                        "type": "string",
+                        "description": "League key (e.g., '461.l.61410')"
+                    },
+                    "week": {
+                        "type": "integer",
+                        "description": "Week number (optional, defaults to current week)"
+                    },
+                    "lineup": {
+                        "type": "array",
+                        "description": "Array of player assignments with player_key and position",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "player_key": {
+                                    "type": "string",
+                                    "description": "Yahoo player key (e.g., '449.p.30971')"
+                                },
+                                "position": {
+                                    "type": "string",
+                                    "description": "Position to assign player to (QB, RB, WR, TE, W/R/T, K, DEF, BN)"
+                                }
+                            },
+                            "required": ["player_key", "position"]
+                        }
+                    }
+                },
+                "required": ["league_key", "lineup"]
+            }
+        ),
+        Tool(
+            name="ff_add_player",
+            description="Add a player from free agents or waiver wire",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "league_key": {
+                        "type": "string",
+                        "description": "League key (e.g., '461.l.61410')"
+                    },
+                    "player_key": {
+                        "type": "string",
+                        "description": "Yahoo player key of player to add (e.g., '449.p.30971')"
+                    },
+                    "drop_player_key": {
+                        "type": "string",
+                        "description": "Yahoo player key of player to drop (required if roster is full)"
+                    },
+                    "waiver_priority": {
+                        "type": "integer",
+                        "description": "Waiver claim priority (1=highest, optional for free agents)"
+                    }
+                },
+                "required": ["league_key", "player_key"]
+            }
+        ),
+        Tool(
+            name="ff_change_player_position",
+            description="Move a single player to a different position (safer than full lineup change)",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "league_key": {
+                        "type": "string",
+                        "description": "League key (e.g., '461.l.61410')"
+                    },
+                    "player_key": {
+                        "type": "string",
+                        "description": "Yahoo player key of player to move (e.g., '461.p.30971')"
+                    },
+                    "new_position": {
+                        "type": "string",
+                        "description": "New position for the player (QB, RB, WR, TE, FLEX, K, DEF, BN)"
+                    },
+                    "week": {
+                        "type": "integer",
+                        "description": "Week number (optional, defaults to current week)"
+                    }
+                },
+                "required": ["league_key", "player_key", "new_position"]
+            }
+        ),
+        Tool(
+            name="ff_get_waiver_status",
+            description="Check the status of pending waiver claims and transactions",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "league_key": {
+                        "type": "string",
+                        "description": "League key (e.g., '461.l.61410')"
+                    }
+                },
+                "required": ["league_key"]
+            }
+        ),
+        Tool(
+            name="ff_drop_player",
+            description="Drop a player from your roster",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "league_key": {
+                        "type": "string",
+                        "description": "League key (e.g., '461.l.61410')"
+                    },
+                    "player_key": {
+                        "type": "string",
+                        "description": "Yahoo player key of player to drop (e.g., '449.p.30971')"
+                    }
+                },
+                "required": ["league_key", "player_key"]
+            }
+        ),
+        # === TRADE MANAGEMENT FUNCTIONS ===
+        Tool(
+            name="ff_propose_trade",
+            description="Propose a trade with another team",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "league_key": {
+                        "type": "string",
+                        "description": "League key (e.g., '461.l.61410')"
+                    },
+                    "target_team_key": {
+                        "type": "string",
+                        "description": "Team key of trade partner (e.g., '449.l.61410.t.1')"
+                    },
+                    "send_player_keys": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "Array of player keys you're trading away"
+                    },
+                    "receive_player_keys": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "Array of player keys you want to receive"
+                    },
+                    "trade_note": {
+                        "type": "string",
+                        "description": "Optional message to include with trade proposal"
+                    }
+                },
+                "required": ["league_key", "target_team_key", "send_player_keys", "receive_player_keys"]
+            }
+        ),
+        Tool(
+            name="ff_manage_trade",
+            description="Accept, reject, or cancel trade offers",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "league_key": {
+                        "type": "string",
+                        "description": "League key (e.g., '461.l.61410')"
+                    },
+                    "transaction_key": {
+                        "type": "string",
+                        "description": "Transaction key of the trade"
+                    },
+                    "action": {
+                        "type": "string",
+                        "enum": ["accept", "reject", "cancel"],
+                        "description": "Action to take on the trade"
+                    }
+                },
+                "required": ["league_key", "transaction_key", "action"]
+            }
+        ),
+        # === WAIVER/FREE AGENT FUNCTIONS ===
+        Tool(
+            name="ff_place_waiver_claim",
+            description="Place a waiver claim for a player",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "league_key": {
+                        "type": "string",
+                        "description": "League key (e.g., '461.l.61410')"
+                    },
+                    "add_player_key": {
+                        "type": "string",
+                        "description": "Player key to claim on waivers"
+                    },
+                    "drop_player_key": {
+                        "type": "string",
+                        "description": "Player key to drop (if roster full)"
+                    },
+                    "waiver_priority": {
+                        "type": "integer",
+                        "description": "Waiver priority (1=highest priority)"
+                    }
+                },
+                "required": ["league_key", "add_player_key", "waiver_priority"]
+            }
+        ),
+        Tool(
+            name="ff_get_pending_transactions",
+            description="Get all pending transactions (trades, waiver claims, etc.)",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "league_key": {
+                        "type": "string",
+                        "description": "League key (e.g., '461.l.61410')"
+                    }
+                },
+                "required": ["league_key"]
+            }
         )
     ]
     
@@ -1209,6 +1427,8 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
                                                 for element in player_data:
                                                     if isinstance(element, dict):
                                                         # Basic info
+                                                        if "player_key" in element:
+                                                            player_info["player_key"] = element["player_key"]
                                                         if "name" in element:
                                                             name_val = element["name"]
                                                             if isinstance(name_val, dict):
@@ -1611,7 +1831,100 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
                         "error": f"Failed to get all teams: {str(e)}",
                         "suggestion": "Check that the league key is valid"
                     }
-        
+
+        # === ROSTER MANAGEMENT FUNCTIONS ===
+        elif name == "ff_set_lineup":
+            league_key = arguments.get("league_key")
+            week = arguments.get("week")
+            lineup = arguments.get("lineup", [])
+
+            if not league_key or not lineup:
+                result = {"error": "League key and lineup are required"}
+            else:
+                result = await set_lineup(league_key, lineup, week)
+
+        elif name == "ff_change_player_position":
+            league_key = arguments.get("league_key")
+            player_key = arguments.get("player_key")
+            new_position = arguments.get("new_position")
+            week = arguments.get("week")
+
+            if not league_key or not player_key or not new_position:
+                result = {"error": "League key, player key, and new position are required"}
+            else:
+                result = await change_player_position(league_key, player_key, new_position, week)
+
+        elif name == "ff_get_waiver_status":
+            league_key = arguments.get("league_key")
+
+            if not league_key:
+                result = {"error": "League key is required"}
+            else:
+                result = await get_waiver_status(league_key)
+
+        elif name == "ff_add_player":
+            league_key = arguments.get("league_key")
+            player_key = arguments.get("player_key")
+            drop_player_key = arguments.get("drop_player_key")
+            waiver_priority = arguments.get("waiver_priority")
+
+            if not league_key or not player_key:
+                result = {"error": "League key and player key are required"}
+            else:
+                result = await add_player(league_key, player_key, drop_player_key, waiver_priority)
+
+        elif name == "ff_drop_player":
+            league_key = arguments.get("league_key")
+            player_key = arguments.get("player_key")
+
+            if not league_key or not player_key:
+                result = {"error": "League key and player key are required"}
+            else:
+                result = await drop_player(league_key, player_key)
+
+        # === TRADE MANAGEMENT FUNCTIONS ===
+        elif name == "ff_propose_trade":
+            league_key = arguments.get("league_key")
+            target_team_key = arguments.get("target_team_key")
+            send_player_keys = arguments.get("send_player_keys", [])
+            receive_player_keys = arguments.get("receive_player_keys", [])
+            trade_note = arguments.get("trade_note", "")
+
+            if not all([league_key, target_team_key, send_player_keys, receive_player_keys]):
+                result = {"error": "League key, target team, send players, and receive players are required"}
+            else:
+                result = await propose_trade(league_key, target_team_key, send_player_keys, receive_player_keys, trade_note)
+
+        elif name == "ff_manage_trade":
+            league_key = arguments.get("league_key")
+            transaction_key = arguments.get("transaction_key")
+            action = arguments.get("action")
+
+            if not all([league_key, transaction_key, action]):
+                result = {"error": "League key, transaction key, and action are required"}
+            else:
+                result = await manage_trade(league_key, transaction_key, action)
+
+        # === WAIVER/FREE AGENT FUNCTIONS ===
+        elif name == "ff_place_waiver_claim":
+            league_key = arguments.get("league_key")
+            add_player_key = arguments.get("add_player_key")
+            drop_player_key = arguments.get("drop_player_key")
+            waiver_priority = arguments.get("waiver_priority")
+
+            if not all([league_key, add_player_key, waiver_priority]):
+                result = {"error": "League key, player key, and waiver priority are required"}
+            else:
+                result = await place_waiver_claim(league_key, add_player_key, drop_player_key, waiver_priority)
+
+        elif name == "ff_get_pending_transactions":
+            league_key = arguments.get("league_key")
+
+            if not league_key:
+                result = {"error": "League key is required"}
+            else:
+                result = await get_pending_transactions(league_key)
+
         else:
             result = {"error": f"Unknown tool: {name}"}
         
@@ -2190,6 +2503,863 @@ async def get_all_teams_with_rosters(league_key: str) -> dict:
             "error": f"Failed to get all teams: {str(e)}",
             "suggestion": "Check that the league key is valid"
         }
+
+
+# === ROSTER MANAGEMENT FUNCTIONS ===
+
+def get_league_prefix_from_team_key(team_key: str) -> str:
+    """Extract league prefix from team key (e.g., '449.l.123456.t.1' -> '449.l.123456')"""
+    return team_key[:team_key.find('.t')]
+
+def format_player_key(league_prefix: str, player_id: str) -> str:
+    """Format player key in Yahoo API format"""
+    # Remove any existing prefix if present
+    if '.p.' in player_id:
+        player_id = player_id.split('.p.')[1]
+
+    # Extract game ID from league prefix (e.g., '461.l.848822' -> '461')
+    game_id = league_prefix.split('.')[0]
+    return f"{game_id}.p.{player_id}"
+
+def construct_proper_transaction_xml(action: str, league_prefix: str, team_key: str,
+                                   add_player_id: str = None, drop_player_id: str = None,
+                                   faab: int = None) -> str:
+    """Construct transaction XML using the same pattern as yahoo_fantasy_api library"""
+    from xml.dom.minidom import Document
+
+    doc = Document()
+    fantasy_content = doc.createElement('fantasy_content')
+    doc.appendChild(fantasy_content)
+
+    transaction = doc.createElement('transaction')
+    fantasy_content.appendChild(transaction)
+
+    # Set transaction type
+    type_elem = doc.createElement('type')
+    type_elem.appendChild(doc.createTextNode(action))
+    transaction.appendChild(type_elem)
+
+    # Add FAAB bid if provided
+    if faab is not None:
+        faab_elem = doc.createElement('faab_bid')
+        faab_elem.appendChild(doc.createTextNode(str(faab)))
+        transaction.appendChild(faab_elem)
+
+    if action == 'add/drop':
+        # Add/drop transaction with players element
+        players = doc.createElement('players')
+        transaction.appendChild(players)
+
+        # Add player
+        if add_player_id:
+            _add_transaction_player_xml(doc, players, league_prefix, team_key, add_player_id, "add")
+
+        # Drop player
+        if drop_player_id:
+            _add_transaction_player_xml(doc, players, league_prefix, team_key, drop_player_id, "drop")
+    else:
+        # Single player transaction
+        if add_player_id:
+            _add_transaction_player_xml(doc, transaction, league_prefix, team_key, add_player_id, action)
+        elif drop_player_id:
+            _add_transaction_player_xml(doc, transaction, league_prefix, team_key, drop_player_id, action)
+
+    return doc.toprettyxml()
+
+def _add_transaction_player_xml(doc, root, league_prefix: str, team_key: str, player_id: str, action: str):
+    """Helper to add player XML to transaction (based on yahoo_fantasy_api)"""
+    if action == 'add':
+        team_elem = 'destination_team_key'
+    elif action == 'drop':
+        team_elem = 'source_team_key'
+    else:
+        raise ValueError(f'Unknown action: {action}')
+
+    player = doc.createElement('player')
+    root.appendChild(player)
+
+    # Player key
+    player_key_elem = doc.createElement('player_key')
+    player_key_elem.appendChild(doc.createTextNode(format_player_key(league_prefix, player_id)))
+    player.appendChild(player_key_elem)
+
+    # Transaction data
+    tdata = doc.createElement('transaction_data')
+    player.appendChild(tdata)
+
+    # Transaction type
+    type_elem = doc.createElement('type')
+    type_elem.appendChild(doc.createTextNode(action))
+    tdata.appendChild(type_elem)
+
+    # Team key
+    team_elem_node = doc.createElement(team_elem)
+    team_elem_node.appendChild(doc.createTextNode(team_key))
+    tdata.appendChild(team_elem_node)
+
+def construct_roster_xml(league_prefix: str, lineup: List[Dict[str, str]], week: int) -> str:
+    """Construct roster XML using the same pattern as yahoo_fantasy_api library"""
+    from xml.dom.minidom import Document
+    import datetime
+
+    doc = Document()
+    fantasy_content = doc.createElement('fantasy_content')
+    doc.appendChild(fantasy_content)
+
+    roster = doc.createElement('roster')
+    fantasy_content.appendChild(roster)
+
+    # Set coverage type and week (for NFL)
+    coverage_type = doc.createElement('coverage_type')
+    coverage_type.appendChild(doc.createTextNode('week'))
+    roster.appendChild(coverage_type)
+
+    week_elem = doc.createElement('week')
+    week_elem.appendChild(doc.createTextNode(str(week)))
+    roster.appendChild(week_elem)
+
+    # Players element
+    players = doc.createElement('players')
+    roster.appendChild(players)
+
+    # Add each player
+    for player in lineup:
+        player_elem = doc.createElement('player')
+        players.appendChild(player_elem)
+
+        # Player key (properly formatted)
+        player_key_elem = doc.createElement('player_key')
+        player_key_elem.appendChild(doc.createTextNode(
+            format_player_key(league_prefix, player.get('player_id', player.get('player_key', '')))
+        ))
+        player_elem.appendChild(player_key_elem)
+
+        # Position
+        position_elem = doc.createElement('position')
+        position_elem.appendChild(doc.createTextNode(player.get('selected_position', player.get('position', ''))))
+        player_elem.appendChild(position_elem)
+
+    return doc.toprettyxml()
+
+async def set_lineup(league_key: str, lineup: List[Dict[str, str]], week: Optional[int] = None) -> Dict[str, Any]:
+    """Set lineup using Yahoo's roster slot approach - get current roster first, then make changes."""
+    try:
+        # Get current team key
+        team_key = await get_user_team_key(league_key)
+        if not team_key:
+            return {"status": "error", "error": "Could not find your team in this league"}
+
+        # If no week specified, use current week
+        if not week:
+            leagues = await discover_leagues()
+            if league_key in leagues:
+                week = leagues[league_key].get("current_week", 1)
+            else:
+                week = 1
+
+        # Get league prefix for proper formatting
+        league_prefix = get_league_prefix_from_team_key(team_key)
+
+        # Position mapping for user input to Yahoo positions
+        POSITION_MAP = {
+            'QB': 'QB', 'RB': 'RB', 'WR': 'WR', 'TE': 'TE',
+            'FLEX': 'W/R/T', 'W/R/T': 'W/R/T', 'K': 'K', 'DEF': 'DEF',
+            'D/ST': 'DEF', 'BN': 'BN', 'BENCH': 'BN'
+        }
+
+        # NEW APPROACH: Get current roster first to understand existing assignments
+        try:
+            current_roster_data = await yahoo_api_call(f"team/{team_key}/roster")
+
+            # Extract current player positions to avoid conflicts
+            current_positions = {}
+            if ("fantasy_content" in current_roster_data and
+                "team" in current_roster_data["fantasy_content"] and
+                "roster" in current_roster_data["fantasy_content"]["team"]):
+
+                roster_data = current_roster_data["fantasy_content"]["team"]["roster"]
+                if "players" in roster_data and "player" in roster_data["players"]:
+                    players = roster_data["players"]["player"]
+                    if not isinstance(players, list):
+                        players = [players]
+
+                    for player in players:
+                        if isinstance(player, dict):
+                            player_key = player.get("player_key", "")
+                            if "selected_position" in player:
+                                selected_pos = player["selected_position"]
+                                if isinstance(selected_pos, dict) and "position" in selected_pos:
+                                    current_positions[player_key] = selected_pos["position"]
+                                elif isinstance(selected_pos, str):
+                                    current_positions[player_key] = selected_pos
+        except Exception as e:
+            # If we can't get current roster, continue with direct approach
+            current_positions = {}
+
+        # Validate and normalize positions
+        normalized_lineup = []
+        for player in lineup:
+            position = player.get('position', '').upper()
+            player_key = player.get('player_key', player.get('player_id', ''))
+
+            # Map user input to Yahoo position
+            if position not in POSITION_MAP:
+                return {
+                    "status": "error",
+                    "error": f"Invalid position '{position}'. Valid positions: {list(POSITION_MAP.keys())}",
+                    "suggestion": "Use correct Yahoo Fantasy position names"
+                }
+
+            yahoo_position = POSITION_MAP[position]
+
+            # Only include if this is a position change (optimization)
+            current_pos = current_positions.get(player_key)
+            if current_pos != yahoo_position:
+                normalized_lineup.append({
+                    'player_id': player_key,
+                    'selected_position': yahoo_position
+                })
+
+        # If no changes needed, return success
+        if not normalized_lineup:
+            return {
+                "status": "success",
+                "message": f"Lineup already set correctly for week {week}",
+                "team_key": team_key,
+                "week": week,
+                "changes_made": 0
+            }
+
+        # Build proper XML using yahoo_fantasy_api pattern (only changed players)
+        roster_xml = construct_roster_xml(league_prefix, normalized_lineup, week)
+
+        # Make PUT request to change positions
+        url = f"{YAHOO_API_BASE}/team/{team_key}/roster"
+        headers = {
+            "Authorization": f"Bearer {YAHOO_ACCESS_TOKEN}",
+            "Content-Type": "application/xml"
+        }
+
+        async with aiohttp.ClientSession() as session:
+            async with session.put(url, data=roster_xml, headers=headers) as response:
+                response_text = await response.text()
+
+                if response.status in [200, 201]:
+                    # Parse response to check for actual success/failure
+                    try:
+                        # Check for error indicators in the response
+                        if "error" in response_text.lower() or "fail" in response_text.lower() or "already been filled" in response_text.lower():
+                            return {
+                                "status": "error",
+                                "error": "Lineup change was rejected by Yahoo",
+                                "full_response": response_text,
+                                "http_status": response.status,
+                                "sent_xml": roster_xml[:500],  # Show what we sent
+                                "suggestion": "Check the full response for specific error details"
+                            }
+
+                        return {
+                            "status": "success",
+                            "message": f"Lineup changes applied for week {week}",
+                            "team_key": team_key,
+                            "week": week,
+                            "changes_made": len(normalized_lineup),
+                            "players_changed": [p['player_id'] for p in normalized_lineup],
+                            "yahoo_response": response_text[:500],  # First 500 chars of response
+                            "http_status": response.status
+                        }
+                    except Exception as parse_error:
+                        return {
+                            "status": "success_unverified",
+                            "message": "Request sent but couldn't parse Yahoo response",
+                            "parse_error": str(parse_error),
+                            "raw_response": response_text,
+                            "sent_xml": roster_xml[:500],
+                            "http_status": response.status
+                        }
+                else:
+                    return {
+                        "status": "error",
+                        "error": f"Failed to set lineup (HTTP {response.status})",
+                        "full_response": response_text,
+                        "sent_xml": roster_xml[:500],  # Show what we sent for debugging
+                        "suggestion": "Check player keys and position assignments"
+                    }
+
+    except Exception as e:
+        return {
+            "status": "error",
+            "error": f"Failed to set lineup: {str(e)}",
+            "suggestion": "Verify league key and player information"
+        }
+
+
+async def add_player(league_key: str, player_key: str, drop_player_key: Optional[str] = None, waiver_priority: Optional[int] = None) -> Dict[str, Any]:
+    """Add a player from free agents or waivers."""
+    try:
+        # Get current team key
+        team_key = await get_user_team_key(league_key)
+        if not team_key:
+            return {"status": "error", "error": "Could not find your team in this league"}
+
+        # Get league prefix for proper player key formatting
+        league_prefix = get_league_prefix_from_team_key(team_key)
+
+        # Build proper transaction XML using yahoo_fantasy_api patterns
+        if drop_player_key:
+            # Add/drop transaction
+            transaction_xml = construct_proper_transaction_xml(
+                action="add/drop",
+                league_prefix=league_prefix,
+                team_key=team_key,
+                add_player_id=player_key,
+                drop_player_id=drop_player_key,
+                faab=waiver_priority
+            )
+        else:
+            # Simple add transaction
+            transaction_xml = construct_proper_transaction_xml(
+                action="add",
+                league_prefix=league_prefix,
+                team_key=team_key,
+                add_player_id=player_key,
+                faab=waiver_priority
+            )
+
+        # Submit transaction
+        url = f"{YAHOO_API_BASE}/league/{league_key}/transactions"
+        headers = {
+            "Authorization": f"Bearer {YAHOO_ACCESS_TOKEN}",
+            "Content-Type": "application/xml"
+        }
+
+        async with aiohttp.ClientSession() as session:
+            async with session.post(url, data=transaction_xml, headers=headers) as response:
+                response_text = await response.text()
+
+                if response.status in [200, 201]:
+                    # Parse response to check for actual success/failure
+                    try:
+                        import json
+                        # Try to parse as JSON first
+                        if response_text.strip().startswith('{'):
+                            response_data = json.loads(response_text)
+                        else:
+                            # Handle XML response
+                            response_data = {"raw_response": response_text}
+
+                        # Check for error indicators in the response
+                        if "error" in response_text.lower() or "fail" in response_text.lower():
+                            return {
+                                "status": "error",
+                                "error": "Transaction was rejected by Yahoo",
+                                "full_response": response_text,
+                                "http_status": response.status,
+                                "suggestion": "Check the full response for specific error details"
+                            }
+
+                        return {
+                            "status": "success",
+                            "message": "Player add request submitted successfully",
+                            "player_key": player_key,
+                            "dropped_player": drop_player_key,
+                            "waiver_priority": waiver_priority,
+                            "yahoo_response": response_text[:500],  # First 500 chars of response
+                            "http_status": response.status
+                        }
+                    except Exception as parse_error:
+                        return {
+                            "status": "success_unverified",
+                            "message": "Request sent but couldn't parse Yahoo response",
+                            "player_key": player_key,
+                            "dropped_player": drop_player_key,
+                            "parse_error": str(parse_error),
+                            "raw_response": response_text,
+                            "http_status": response.status
+                        }
+                else:
+                    return {
+                        "status": "error",
+                        "error": f"Failed to add player (HTTP {response.status})",
+                        "full_response": response_text,
+                        "suggestion": "Check if player is available and roster has space"
+                    }
+
+    except Exception as e:
+        return {
+            "status": "error",
+            "error": f"Failed to add player: {str(e)}",
+            "suggestion": "Verify player key and league permissions"
+        }
+
+
+async def drop_player(league_key: str, player_key: str) -> Dict[str, Any]:
+    """Drop a player from the roster."""
+    try:
+        # Get current team key
+        team_key = await get_user_team_key(league_key)
+        if not team_key:
+            return {"status": "error", "error": "Could not find your team in this league"}
+
+        # Get league prefix for proper formatting
+        league_prefix = get_league_prefix_from_team_key(team_key)
+
+        # Build proper transaction XML using yahoo_fantasy_api pattern
+        transaction_xml = construct_proper_transaction_xml(
+            action="drop",
+            league_prefix=league_prefix,
+            team_key=team_key,
+            drop_player_id=player_key
+        )
+
+        # Submit transaction
+        url = f"{YAHOO_API_BASE}/league/{league_key}/transactions"
+        headers = {
+            "Authorization": f"Bearer {YAHOO_ACCESS_TOKEN}",
+            "Content-Type": "application/xml"
+        }
+
+        async with aiohttp.ClientSession() as session:
+            async with session.post(url, data=transaction_xml, headers=headers) as response:
+                if response.status in [200, 201]:
+                    return {
+                        "status": "success",
+                        "message": "Player dropped successfully",
+                        "player_key": player_key
+                    }
+                else:
+                    text = await response.text()
+                    return {
+                        "status": "error",
+                        "error": f"Failed to drop player (HTTP {response.status}): {text[:200]}"
+                    }
+
+    except Exception as e:
+        return {
+            "status": "error",
+            "error": f"Failed to drop player: {str(e)}"
+        }
+
+
+async def change_player_position(league_key: str, player_key: str, new_position: str, week: Optional[int] = None) -> Dict[str, Any]:
+    """Change a single player's position (based on yahoo_fantasy_api change_positions pattern)."""
+    try:
+        # Get current team key
+        team_key = await get_user_team_key(league_key)
+        if not team_key:
+            return {"status": "error", "error": "Could not find your team in this league"}
+
+        # If no week specified, use current week
+        if not week:
+            leagues = await discover_leagues()
+            if league_key in leagues:
+                week = leagues[league_key].get("current_week", 1)
+            else:
+                week = 1
+
+        # Get league prefix for proper formatting
+        league_prefix = get_league_prefix_from_team_key(team_key)
+
+        # Position mapping
+        POSITION_MAP = {
+            'QB': 'QB', 'RB': 'RB', 'WR': 'WR', 'TE': 'TE',
+            'FLEX': 'W/R/T', 'W/R/T': 'W/R/T', 'K': 'K', 'DEF': 'DEF',
+            'D/ST': 'DEF', 'BN': 'BN', 'BENCH': 'BN'
+        }
+
+        # Validate position
+        position_upper = new_position.upper()
+        if position_upper not in POSITION_MAP:
+            return {
+                "status": "error",
+                "error": f"Invalid position '{new_position}'. Valid positions: {list(POSITION_MAP.keys())}",
+                "suggestion": "Use correct Yahoo Fantasy position names"
+            }
+
+        yahoo_position = POSITION_MAP[position_upper]
+
+        # Create single-player position change (following yahoo_fantasy_api pattern)
+        lineup = [{
+            'player_id': player_key,
+            'selected_position': yahoo_position
+        }]
+
+        # Build proper XML using yahoo_fantasy_api pattern
+        roster_xml = construct_roster_xml(league_prefix, lineup, week)
+
+        # Make PUT request to change position
+        url = f"{YAHOO_API_BASE}/team/{team_key}/roster"
+        headers = {
+            "Authorization": f"Bearer {YAHOO_ACCESS_TOKEN}",
+            "Content-Type": "application/xml"
+        }
+
+        async with aiohttp.ClientSession() as session:
+            async with session.put(url, data=roster_xml, headers=headers) as response:
+                response_text = await response.text()
+
+                if response.status in [200, 201]:
+                    # Parse response to check for actual success/failure
+                    try:
+                        # Check for error indicators in the response
+                        if "error" in response_text.lower() or "fail" in response_text.lower() or "already been filled" in response_text.lower():
+                            return {
+                                "status": "error",
+                                "error": "Position change was rejected by Yahoo",
+                                "full_response": response_text,
+                                "http_status": response.status,
+                                "sent_xml": roster_xml[:500],
+                                "suggestion": "Check the full response for specific error details"
+                            }
+
+                        return {
+                            "status": "success",
+                            "message": f"Player moved to {yahoo_position} for week {week}",
+                            "player_key": player_key,
+                            "new_position": yahoo_position,
+                            "team_key": team_key,
+                            "week": week,
+                            "yahoo_response": response_text[:500],
+                            "http_status": response.status
+                        }
+                    except Exception as parse_error:
+                        return {
+                            "status": "success_unverified",
+                            "message": "Request sent but couldn't parse Yahoo response",
+                            "parse_error": str(parse_error),
+                            "raw_response": response_text,
+                            "sent_xml": roster_xml[:500],
+                            "http_status": response.status
+                        }
+                else:
+                    return {
+                        "status": "error",
+                        "error": f"Failed to change position (HTTP {response.status})",
+                        "full_response": response_text,
+                        "sent_xml": roster_xml[:500],
+                        "suggestion": "Check player key and position assignment"
+                    }
+
+    except Exception as e:
+        return {
+            "status": "error",
+            "error": f"Failed to change player position: {str(e)}",
+            "suggestion": "Verify league key and player information"
+        }
+
+
+async def get_waiver_status(league_key: str) -> Dict[str, Any]:
+    """Get pending waiver claims and their status."""
+    try:
+        # Get current team key
+        team_key = await get_user_team_key(league_key)
+        if not team_key:
+            return {"status": "error", "error": "Could not find your team in this league"}
+
+        # Get pending transactions (waivers)
+        data = await yahoo_api_call(f"league/{league_key}/transactions;type=waiver")
+
+        waiver_claims = []
+
+        if "fantasy_content" in data and "league" in data["fantasy_content"]:
+            league_data = data["fantasy_content"]["league"]
+
+            if "transactions" in league_data and league_data["transactions"]:
+                transactions = league_data["transactions"]
+
+                # Handle both single transaction and array of transactions
+                if isinstance(transactions, dict) and "transaction" in transactions:
+                    transactions = transactions["transaction"]
+
+                if not isinstance(transactions, list):
+                    transactions = [transactions]
+
+                for transaction in transactions:
+                    if isinstance(transaction, dict):
+                        transaction_key = transaction.get("transaction_key", "")
+                        status = transaction.get("status", "unknown")
+                        timestamp = transaction.get("timestamp", "")
+
+                        # Get player information
+                        players = []
+                        if "players" in transaction and transaction["players"]:
+                            player_data = transaction["players"]
+                            if "player" in player_data:
+                                player_list = player_data["player"]
+                                if not isinstance(player_list, list):
+                                    player_list = [player_list]
+
+                                for player in player_list:
+                                    if isinstance(player, dict):
+                                        player_info = {
+                                            "player_key": player.get("player_key", ""),
+                                            "name": "",
+                                            "action": ""
+                                        }
+
+                                        # Get player name
+                                        if "name" in player:
+                                            if "full" in player["name"]:
+                                                player_info["name"] = player["name"]["full"]
+                                            elif isinstance(player["name"], str):
+                                                player_info["name"] = player["name"]
+
+                                        # Get transaction action (add/drop)
+                                        if "transaction_data" in player:
+                                            trans_data = player["transaction_data"]
+                                            if isinstance(trans_data, list):
+                                                trans_data = trans_data[0]
+                                            if "type" in trans_data:
+                                                player_info["action"] = trans_data["type"]
+
+                                        players.append(player_info)
+
+                        waiver_claims.append({
+                            "transaction_key": transaction_key,
+                            "status": status,
+                            "timestamp": timestamp,
+                            "players": players
+                        })
+
+        return {
+            "status": "success",
+            "league_key": league_key,
+            "team_key": team_key,
+            "pending_waivers": len([w for w in waiver_claims if w["status"] in ["pending", "waiver"]]),
+            "total_waiver_transactions": len(waiver_claims),
+            "waiver_claims": waiver_claims
+        }
+
+    except Exception as e:
+        return {
+            "status": "error",
+            "error": f"Failed to get waiver status: {str(e)}",
+            "suggestion": "Check league key and permissions"
+        }
+
+
+# === TRADE MANAGEMENT FUNCTIONS ===
+
+async def propose_trade(league_key: str, target_team_key: str, send_player_keys: List[str], receive_player_keys: List[str], trade_note: str = "") -> Dict[str, Any]:
+    """Propose a trade with another team."""
+    try:
+        # Get current team key
+        team_key = await get_user_team_key(league_key)
+        if not team_key:
+            return {"status": "error", "error": "Could not find your team in this league"}
+
+        # Build trade XML
+        trade_xml = '<transaction>'
+        trade_xml += '<type>pending_trade</type>'
+
+        # Add players being sent
+        for player_key in send_player_keys:
+            trade_xml += f'<player><player_key>{player_key}</player_key><transaction_data><type>pending_trade</type><source_type>team</source_type><source_team_key>{team_key}</source_team_key><destination_type>team</destination_type><destination_team_key>{target_team_key}</destination_team_key></transaction_data></player>'
+
+        # Add players being received
+        for player_key in receive_player_keys:
+            trade_xml += f'<player><player_key>{player_key}</player_key><transaction_data><type>pending_trade</type><source_type>team</source_type><source_team_key>{target_team_key}</source_team_key><destination_type>team</destination_type><destination_team_key>{team_key}</destination_team_key></transaction_data></player>'
+
+        if trade_note:
+            trade_xml += f'<trade_note>{trade_note}</trade_note>'
+
+        trade_xml += '</transaction>'
+
+        # Submit trade proposal
+        url = f"{YAHOO_API_BASE}/league/{league_key}/transactions"
+        headers = {
+            "Authorization": f"Bearer {YAHOO_ACCESS_TOKEN}",
+            "Content-Type": "application/xml"
+        }
+
+        async with aiohttp.ClientSession() as session:
+            async with session.post(url, data=trade_xml, headers=headers) as response:
+                if response.status in [200, 201]:
+                    return {
+                        "status": "success",
+                        "message": "Trade proposed successfully",
+                        "target_team": target_team_key,
+                        "sending": send_player_keys,
+                        "receiving": receive_player_keys,
+                        "note": trade_note
+                    }
+                else:
+                    text = await response.text()
+                    return {
+                        "status": "error",
+                        "error": f"Failed to propose trade (HTTP {response.status}): {text[:200]}",
+                        "suggestion": "Check team keys and player ownership"
+                    }
+
+    except Exception as e:
+        return {
+            "status": "error",
+            "error": f"Failed to propose trade: {str(e)}"
+        }
+
+
+async def manage_trade(league_key: str, transaction_key: str, action: str) -> Dict[str, Any]:
+    """Accept, reject, or cancel a trade."""
+    try:
+        if action not in ["accept", "reject", "cancel"]:
+            return {"status": "error", "error": "Action must be 'accept', 'reject', or 'cancel'"}
+
+        # Build action XML
+        action_xml = f'<transaction><transaction_key>{transaction_key}</transaction_key><action>{action}</action></transaction>'
+
+        # Submit action
+        url = f"{YAHOO_API_BASE}/league/{league_key}/transactions"
+        headers = {
+            "Authorization": f"Bearer {YAHOO_ACCESS_TOKEN}",
+            "Content-Type": "application/xml"
+        }
+
+        async with aiohttp.ClientSession() as session:
+            async with session.put(url, data=action_xml, headers=headers) as response:
+                if response.status in [200, 201]:
+                    return {
+                        "status": "success",
+                        "message": f"Trade {action}ed successfully",
+                        "transaction_key": transaction_key,
+                        "action": action
+                    }
+                else:
+                    text = await response.text()
+                    return {
+                        "status": "error",
+                        "error": f"Failed to {action} trade (HTTP {response.status}): {text[:200]}"
+                    }
+
+    except Exception as e:
+        return {
+            "status": "error",
+            "error": f"Failed to {action} trade: {str(e)}"
+        }
+
+
+# === WAIVER/FREE AGENT FUNCTIONS ===
+
+async def place_waiver_claim(league_key: str, add_player_key: str, drop_player_key: Optional[str], waiver_priority: int) -> Dict[str, Any]:
+    """Place a waiver claim for a player."""
+    try:
+        # Build waiver claim XML
+        claim_xml = '<transaction>'
+        claim_xml += '<type>waiver</type>'
+        claim_xml += f'<player><player_key>{add_player_key}</player_key><transaction_data><type>add</type></transaction_data></player>'
+
+        if drop_player_key:
+            claim_xml += f'<player><player_key>{drop_player_key}</player_key><transaction_data><type>drop</type></transaction_data></player>'
+
+        claim_xml += f'<faab_bid>{waiver_priority}</faab_bid>'
+        claim_xml += '</transaction>'
+
+        # Submit waiver claim
+        url = f"{YAHOO_API_BASE}/league/{league_key}/transactions"
+        headers = {
+            "Authorization": f"Bearer {YAHOO_ACCESS_TOKEN}",
+            "Content-Type": "application/xml"
+        }
+
+        async with aiohttp.ClientSession() as session:
+            async with session.post(url, data=claim_xml, headers=headers) as response:
+                if response.status in [200, 201]:
+                    return {
+                        "status": "success",
+                        "message": "Waiver claim placed successfully",
+                        "add_player_key": add_player_key,
+                        "drop_player_key": drop_player_key,
+                        "waiver_priority": waiver_priority
+                    }
+                else:
+                    text = await response.text()
+                    return {
+                        "status": "error",
+                        "error": f"Failed to place waiver claim (HTTP {response.status}): {text[:200]}"
+                    }
+
+    except Exception as e:
+        return {
+            "status": "error",
+            "error": f"Failed to place waiver claim: {str(e)}"
+        }
+
+
+async def get_pending_transactions(league_key: str) -> Dict[str, Any]:
+    """Get all pending transactions for the league."""
+    try:
+        data = await yahoo_api_call(f"league/{league_key}/transactions")
+
+        transactions = []
+        fantasy_content = data.get("fantasy_content", {})
+        league_data = fantasy_content.get("league", [])
+
+        if len(league_data) > 1 and isinstance(league_data[1], dict) and "transactions" in league_data[1]:
+            trans_data = league_data[1]["transactions"]
+
+            for key in trans_data:
+                if key != "count" and isinstance(trans_data[key], dict):
+                    if "transaction" in trans_data[key]:
+                        trans = trans_data[key]["transaction"]
+                        if isinstance(trans, list) and len(trans) > 0:
+                            trans_info = {}
+                            for element in trans[0]:
+                                if isinstance(element, dict):
+                                    trans_info.update(element)
+
+                            if trans_info:
+                                transactions.append(trans_info)
+
+        return {
+            "status": "success",
+            "league_key": league_key,
+            "total_transactions": len(transactions),
+            "pending_transactions": transactions
+        }
+
+    except Exception as e:
+        return {
+            "status": "error",
+            "error": f"Failed to get pending transactions: {str(e)}"
+        }
+
+
+async def get_user_team_key(league_key: str) -> Optional[str]:
+    """Get the user's team key for a league."""
+    try:
+        data = await yahoo_api_call(f"league/{league_key}/teams")
+
+        fantasy_content = data.get("fantasy_content", {})
+        league = fantasy_content.get("league", [])
+
+        if len(league) > 1 and isinstance(league[1], dict) and "teams" in league[1]:
+            teams = league[1]["teams"]
+
+            for key in teams:
+                if key != "count" and isinstance(teams[key], dict):
+                    if "team" in teams[key]:
+                        team_array = teams[key]["team"]
+
+                        if isinstance(team_array, list) and len(team_array) > 0:
+                            team_data = team_array[0]
+
+                            if isinstance(team_data, list):
+                                team_key = None
+                                is_users_team = False
+
+                                for element in team_data:
+                                    if isinstance(element, dict):
+                                        if "team_key" in element:
+                                            team_key = element["team_key"]
+                                        if "is_owned_by_current_login" in element and element["is_owned_by_current_login"] == 1:
+                                            is_users_team = True
+
+                                if team_key and is_users_team:
+                                    return team_key
+
+        return None
+
+    except Exception as e:
+        return None
 
 
 async def main():

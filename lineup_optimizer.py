@@ -8,7 +8,7 @@ from typing import Dict, List, Optional, Tuple
 from dataclasses import dataclass, field
 import numpy as np
 from matchup_analyzer import matchup_analyzer
-from sleeper_api import sleeper_client, get_trending_adds
+from src.sleeper_api import sleeper_client, get_trending_adds
 from position_normalizer import position_normalizer
 
 
@@ -421,7 +421,7 @@ class LineupOptimizer:
                 player.matchup_description = desc
             
             # Get Sleeper projection
-            from sleeper_api import get_player_projection
+            from src.sleeper_api import get_player_projection
             proj = await get_player_projection(player.name)
             if proj:
                 player.sleeper_projection = proj.get('pts_ppr', proj.get('pts_std', 0))

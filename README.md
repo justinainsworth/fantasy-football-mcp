@@ -1,8 +1,20 @@
-[![MSeeP.ai Security Assessment Badge](https://mseep.net/pr/derekrbreese-fantasy-football-mcp-public-badge.png)](https://mseep.ai/app/derekrbreese-fantasy-football-mcp-public)
+# Enhanced Fantasy Football MCP Server
 
-# Fantasy Football MCP Server
+A Model Context Protocol (MCP) server for Yahoo Fantasy Football integration with Claude Desktop. Features advanced lineup optimization, draft assistance, comprehensive league management, and enhanced roster management capabilities.
 
-A Model Context Protocol (MCP) server for Yahoo Fantasy Football integration with Claude Desktop. Features advanced lineup optimization, draft assistance, and comprehensive league management.
+## 🙏 Attribution
+
+This project is based on the excellent foundation provided by [derekrbreese/fantasy-football-mcp-public](https://github.com/derekrbreese/fantasy-football-mcp-public). Special thanks to Derek Breese for the initial concept, architecture, and scaffolding that made this enhanced version possible.
+
+## ✨ Enhancements in This Fork
+
+- **Enhanced Roster Management**: Fixed "position already filled" errors with intelligent position change detection
+- **Working Waiver Wire Transactions**: Fully functional add/drop player capabilities with proper Yahoo API integration
+- **Waiver Status Tracking**: New function to monitor pending waiver claims and their approval status
+- **Single-Player Position Changes**: Safer lineup management that changes one player at a time
+- **Improved Error Handling**: Comprehensive response parsing and detailed debugging information
+- **Fixed Import Dependencies**: Resolved sleeper_api and other module import issues
+- **Yahoo API Compliance**: Updated XML formatting to match Yahoo's exact specifications
 
 ## Features
 
@@ -26,8 +38,8 @@ A Model Context Protocol (MCP) server for Yahoo Fantasy Football integration wit
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/derekrbreese/fantasy-football-mcp-public.git
-cd fantasy-football-mcp-public
+git clone https://github.com/carterfawson/fantasy-football-mcp.git
+cd fantasy-football-mcp
 ```
 
 2. Install dependencies:
@@ -53,12 +65,19 @@ pip install -r requirements.txt
 - `ff_get_league_info` - Get detailed league information
 - `ff_get_standings` - View current standings
 
-### Team Management  
+### Team Management
 - `ff_get_roster` - Get your team roster
 - `ff_get_matchup` - View matchup details with opponent analysis
 - `ff_get_opponent_roster` - Get opponent's roster for matchup planning
 - `ff_get_opponent_roster_comparison` - Detailed roster comparison and insights
 - `ff_get_optimal_lineup` - Get AI lineup recommendations
+
+### 🆕 Enhanced Roster Management
+- `ff_set_lineup` - Set your starting lineup (enhanced with intelligent position change detection)
+- `ff_change_player_position` - Move a single player to a different position (safer than full lineup changes)
+- `ff_add_player` - Add players from free agents or waiver wire (fully functional)
+- `ff_drop_player` - Drop players from your roster
+- `ff_get_waiver_status` - Check status of pending waiver claims and transactions
 
 ### Player Discovery
 - `ff_get_players` - Browse available players
