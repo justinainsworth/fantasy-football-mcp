@@ -28,6 +28,9 @@ from reauth_yahoo import get_user_guid, save_tokens  # noqa: E402
 AUTH_URL = "https://api.login.yahoo.com/oauth2/request_auth"
 TOKEN_URL = "https://api.login.yahoo.com/oauth2/get_token"
 REDIRECT_URI = os.getenv("YAHOO_REDIRECT_URI", "https://localhost:8000/callback")
+# Ask for Fantasy Sports explicitly; apps that also have OpenID otherwise get profile-only tokens.
+# Use fspt-w once Yahoo grants Read/Write.
+SCOPE = os.getenv("YAHOO_SCOPE", "fspt-r")
 
 
 def main():
@@ -41,6 +44,7 @@ def main():
         "client_id": client_id,
         "redirect_uri": REDIRECT_URI,
         "response_type": "code",
+        "scope": SCOPE,
         "language": "en-us",
     })
     print(f"📌 Redirect URI: {REDIRECT_URI} (must match your Yahoo app exactly)\n")
