@@ -234,7 +234,7 @@ def save_tokens(access_token, refresh_token, guid=None):
         with open(env_path, 'r') as f:
             for line in f:
                 if not line.startswith(("YAHOO_ACCESS_TOKEN=", "YAHOO_REFRESH_TOKEN=", "YAHOO_GUID=")):
-                    env_lines.append(line)
+                    env_lines.append(line if line.endswith("\n") else line + "\n")
     
     # Add new tokens
     env_lines.append(f"YAHOO_ACCESS_TOKEN={access_token}\n")
