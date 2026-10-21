@@ -30,7 +30,7 @@ loguru==0.7.3
 markdown-it-py
 matplotlib
 mccabe==0.7.0
-mcp
+mcp<2
 mdurl==0.1.2
 multidict==6.6.4
 mypy==1.14.1
