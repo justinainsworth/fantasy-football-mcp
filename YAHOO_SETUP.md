@@ -42,16 +42,15 @@ You'll need the following credentials:
    - This is just for reference, not actually used
 
    ### Redirect URI(s)
-   - Enter: `http://localhost:8000/callback`
+   - Enter: `https://localhost:8000/callback`
    - ⚠️ **CRITICAL**: 
-     - Must be HTTPS not HTTP for localhost
+     - Must be HTTPS (Yahoo rejects `oob` and http:// URIs)
      - Must NOT have trailing slash
      - Must match EXACTLY in your code
 
    ### API Permissions
    - Find "Fantasy Sports" in the list
-   - Click the checkbox for **"Read"** permission
-   - ✅ Only select Read (not Read/Write)
+   - Choose **"Read"** (newer Yahoo apps may only offer Read; write tools like set-lineup and add/drop need Read/Write)
 
    ### OAuth Client Type
    - Pick Confidential Client - Choose for traditional apps.
@@ -109,7 +108,7 @@ After setting up your app, you need to authenticate to get tokens:
 
 2. **Run the authentication script**:
    ```bash
-   python utils/setup_yahoo_auth.py
+   python utils/yahoo_login.py
    ```
 
 3. **What happens**:
