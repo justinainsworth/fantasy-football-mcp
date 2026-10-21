@@ -35,7 +35,7 @@ Quick steps:
 1. Go to https://developer.yahoo.com/apps/
 2. Create an app with type "Installed Application"
 3. Set redirect URI: `https://localhost:8000/callback`
-4. Enable "Fantasy Sports - Read/Write" permission
+4. Enable "Fantasy Sports" permission (Read/Write if offered; write tools need it)
 5. Save your **Client ID** and **Client Secret**
 
 ### Configure Environment

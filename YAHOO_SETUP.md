@@ -50,8 +50,7 @@ You'll need the following credentials:
 
    ### API Permissions
    - Find "Fantasy Sports" in the list
-   - Choose **"Read/Write"** (needed for lineup, add/drop and waiver tools)
-   - Read alone works for reporting tools only
+   - Choose **"Read"** (newer Yahoo apps may only offer Read; write tools like set-lineup and add/drop need Read/Write)
 
    ### OAuth Client Type
    - Pick Confidential Client - Choose for traditional apps.
