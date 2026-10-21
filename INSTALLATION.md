@@ -34,8 +34,8 @@ pip install -r requirements.txt
 Quick steps:
 1. Go to https://developer.yahoo.com/apps/
 2. Create an app with type "Installed Application"
-3. Set redirect URI: `http://localhost:8000/callback`
-4. Enable "Fantasy Sports - Read" permission
+3. Set redirect URI: `https://localhost:8000/callback`
+4. Enable "Fantasy Sports - Read/Write" permission
 5. Save your **Client ID** and **Client Secret**
 
 ### Configure Environment
@@ -55,7 +55,7 @@ YAHOO_CLIENT_SECRET=your_client_secret_here
 
 Run the authentication script:
 ```bash
-python utils/setup_yahoo_auth.py
+python utils/yahoo_login.py
 ```
 
 This will:
